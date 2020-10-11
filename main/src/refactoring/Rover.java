@@ -47,6 +47,18 @@ public class Rover {
         }
 
         public Position forward(Heading heading) {
+            if(heading == Heading.North) return new Position(x, y + 1);
+            if(heading == Heading.East) return new Position(x + 1, y);
+            if(heading == Heading.South) return new Position(x, y - 1);
+            if(heading == Heading.West) return new Position(x - 1, y);
+            return null;
+        }
+
+        public Position back(Heading heading) {
+            if(heading == Heading.North) return new Position(x, y - 1);
+            if(heading == Heading.East) return new Position(x - 1 , y);
+            if(heading == Heading.South) return new Position(x, y + 1);
+            if(heading == Heading.West) return new Position(x + 1, y);
             return null;
         }
 
