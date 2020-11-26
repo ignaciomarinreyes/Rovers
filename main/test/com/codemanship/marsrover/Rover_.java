@@ -1,131 +1,88 @@
 package com.codemanship.marsrover;
 
 import org.junit.Test;
+import refactoring.Rover;
+import refactoring.SimpleViewPoint;
+import refactoring.SimpleViewPoint.Position;
+import refactoring.ViewPoint;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static refactoring.Rover.Order.*;
+import static refactoring.SimpleViewPoint.Heading.*;
 
 public class Rover_ {
 
     @Test
-    public void turnRightNtoE() {
-        Rover rover = new Rover("N", 5, 5);
-        rover.go("R");
-        assertEquals("E", rover.getFacing());
-        assertEquals(5, rover.getPosition()[0]);
-        assertEquals(5, rover.getPosition()[1]);
+    public void could_be_initialized_with_legacy_constructor() {
+        assertThat(cast(new Rover(new SimpleViewPoint("N", 5, 5)).viewPoint()).heading()).isEqualTo(North);
+        assertThat(cast(new Rover(new SimpleViewPoint("North", 5, 5)).viewPoint()).heading()).isEqualTo(North);
+        assertThat(cast(new Rover(new SimpleViewPoint("North", 5, 5)).viewPoint()).position()).isEqualTo(new Position(5, 5));
     }
 
     @Test
-    public void turnRightEtoS() {
-        Rover rover = new Rover("E", 5, 5);
-        rover.go("R");
-        assertEquals("S", rover.getFacing());
+    public void could_be_initialized_using_new_constructors() {
+        assertThat(cast(new Rover(new SimpleViewPoint(North, new Position(4, 4))).viewPoint()).position()).isEqualTo(new Position(4, 4));
+        assertThat(cast(new Rover(new SimpleViewPoint(North, 4, 4)).viewPoint()).position()).isEqualTo(new Position(4, 4));
     }
 
     @Test
-    public void turnRightStoW() {
-        Rover rover = new Rover("S", 5, 5);
-        rover.go("R");
-        assertEquals("W", rover.getFacing());
+    public void could_turn_left() {
+        Rover rover = new Rover(new SimpleViewPoint(North, new Position(3, 3)));
+        rover.go(Left);
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(West);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(3, 3));
     }
 
     @Test
-    public void turnRightWtoN() {
-        Rover rover = new Rover("W", 5, 5);
-        rover.go("R");
-        assertEquals("N", rover.getFacing());
+    public void could_turn_right() {
+        Rover rover = new Rover(new SimpleViewPoint(East, new Position(5, 1)));
+        rover.go(Right);
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(South);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(5, 1));
     }
 
     @Test
-    public void turnLeftNtoW() {
-        Rover rover = new Rover("N", 5, 5);
-        rover.go("L");
-        assertEquals("W", rover.getFacing());
+    public void could_go_forward() {
+        Rover rover = new Rover(new SimpleViewPoint(South, new Position(-1, 1)));
+        rover.go(Forward);
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(South);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(-1, 0));
     }
 
     @Test
-    public void turnLeftWtoS() {
-        Rover rover = new Rover("W", 5, 5);
-        rover.go("L");
-        assertEquals("S", rover.getFacing());
+    public void could_go_backward() {
+        Rover rover = new Rover(new SimpleViewPoint(West, new Position(-4, 4)));
+        rover.go(Backward);
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(West);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(-3, 4));
     }
 
     @Test
-    public void turnLeftStoE() {
-        Rover rover = new Rover("S", 5, 5);
-        rover.go("L");
-        assertEquals("E", rover.getFacing());
+    public void could_execute_many_orders() {
+        Rover rover = new Rover(new SimpleViewPoint(West, new Position(3, 1)));
+        rover.go(Backward, Left, Forward, Right, Forward);
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(West);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(3, 0));
     }
 
     @Test
-    public void turnLeftEtoN() {
-        Rover rover = new Rover("E", 5, 5);
-        rover.go("L");
-        assertEquals("N", rover.getFacing());
+    public void could_execute_legacy_instructions() {
+        Rover rover = new Rover(new SimpleViewPoint(West, new Position(3, 1)));
+        rover.go("BLFRF");
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(West);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(3, 0));
     }
 
     @Test
-    public void moveFowardFacingN() {
-        Rover rover = new Rover("N", 5, 5);
-        rover.go("F");
-        assertArrayEquals(new int[]{5, 6}, rover.getPosition());
+    public void could_ignore_legacy_instructions() {
+        Rover rover = new Rover(new SimpleViewPoint(West, new Position(3, 1)));
+        rover.go("BL*FRF");
+        assertThat(cast(rover.viewPoint()).heading()).isEqualTo(West);
+        assertThat(cast(rover.viewPoint()).position()).isEqualTo(new Position(3, 0));
     }
 
-    @Test
-    public void moveFowardFacingE() {
-        Rover rover = new Rover("E", 5, 5);
-        rover.go("F");
-        assertArrayEquals(new int[]{6, 5}, rover.getPosition());
+    private SimpleViewPoint cast(ViewPoint viewPoint) {
+        return (SimpleViewPoint) viewPoint;
     }
 
-    @Test
-    public void moveFowardFacingS() {
-        Rover rover = new Rover("S", 5, 5);
-        rover.go("F");
-        assertArrayEquals(new int[]{5, 4}, rover.getPosition());
-    }
-
-    @Test
-    public void moveFowardFacingW() {
-        Rover rover = new Rover("W", 5, 5);
-        rover.go("F");
-        assertArrayEquals(new int[]{4, 5}, rover.getPosition());
-    }
-
-    @Test
-    public void moveBackFacingN() {
-        Rover rover = new Rover("N", 5, 5);
-        rover.go("B");
-        assertArrayEquals(new int[]{5, 4}, rover.getPosition());
-    }
-
-    @Test
-    public void moveBackFacingE() {
-        Rover rover = new Rover("E", 5, 5);
-        rover.go("B");
-        assertArrayEquals(new int[]{4, 5}, rover.getPosition());
-    }
-
-    @Test
-    public void moveBackFacingS() {
-        Rover rover = new Rover("S", 5, 5);
-        rover.go("B");
-        assertArrayEquals(new int[]{5, 6}, rover.getPosition());
-    }
-
-    @Test
-    public void moveBackFacingW() {
-        Rover rover = new Rover("W", 5, 5);
-        rover.go("B");
-        assertArrayEquals(new int[]{6, 5}, rover.getPosition());
-    }
-
-    @Test
-    public void executesSequenceOfInstructions() {
-        Rover rover = new Rover("N", 5, 5);
-        rover.go("RFF");
-        assertEquals("E", rover.getFacing());
-        assertArrayEquals(new int[]{7, 5}, rover.getPosition());
-    }
 }
