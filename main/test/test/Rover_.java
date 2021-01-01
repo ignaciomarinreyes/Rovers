@@ -1,4 +1,4 @@
-package com.codemanship.marsrover;
+package test;
 
 import org.junit.Test;
 import refactoring.Rover;

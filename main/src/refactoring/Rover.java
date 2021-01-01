@@ -24,16 +24,23 @@ public class Rover {
     }
 
     public void go(Order... orders) {
-        go(Arrays.stream(orders));
+        set(go(Arrays.stream(orders)));
     }
 
-    private void go(Stream<Order> orders) {
-        orders.filter(order -> order != null).forEach(order -> execute(order));
+    private void set(ViewPoint viewPoint){
+        if(viewPoint == null) return;
+        this.viewPoint = viewPoint;
     }
 
-    private void execute(Order order) {
-        actions.get(order).execute();
+    private ViewPoint go(Stream<Order> orders) {
+        return orders.filter(order -> order != null)
+                .reduce(this.viewPoint, this::execute, (viewPoint, viewPoint2) -> null);
     }
+
+   private ViewPoint execute(ViewPoint viewPoint, Order order){
+        if(viewPoint == null) return null;
+        return actions.get(order).execute(viewPoint);
+   }
 
     private Map<Order, Action> actions = new HashMap<>();
 
@@ -44,25 +51,25 @@ public class Rover {
         actions.put(Backward, this::backward);
     }
 
-    private ViewPoint turnLeft() {
+    private ViewPoint turnLeft(ViewPoint viewPoint) {
         return viewPoint.turnLeft();
     }
 
-    private ViewPoint turnRight() {
+    private ViewPoint turnRight(ViewPoint viewPoint) {
         return viewPoint.turnRight();
     }
 
-    private ViewPoint forward() {
+    private ViewPoint forward(ViewPoint viewPoint) {
         return viewPoint.forward();
     }
 
-    private ViewPoint backward() {
+    private ViewPoint backward(ViewPoint viewPoint) {
         return viewPoint.backward();
     }
 
     @FunctionalInterface
     public interface Action {
-        void execute();
+        ViewPoint execute(ViewPoint viewPoint);
     }
 
     public enum Order {
@@ -81,7 +88,5 @@ public class Rover {
         }
 
     }
-
-
 }
 
