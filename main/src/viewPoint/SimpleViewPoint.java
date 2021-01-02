@@ -1,6 +1,8 @@
-package refactoring;
+package viewPoint;
 
-import static refactoring.SimpleViewPoint.Heading.*;
+import refactoring.ViewPoint;
+
+import static viewPoint.SimpleViewPoint.Heading.*;
 
 public class SimpleViewPoint implements ViewPoint {
 

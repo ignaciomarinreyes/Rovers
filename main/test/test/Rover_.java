@@ -2,13 +2,13 @@ package test;
 
 import org.junit.Test;
 import refactoring.Rover;
-import refactoring.SimpleViewPoint;
-import refactoring.SimpleViewPoint.Position;
+import viewPoint.SimpleViewPoint;
+import viewPoint.SimpleViewPoint.Position;
 import refactoring.ViewPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static refactoring.Rover.Order.*;
-import static refactoring.SimpleViewPoint.Heading.*;
+import static viewPoint.SimpleViewPoint.Heading.*;
 
 public class Rover_ {
 

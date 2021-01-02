@@ -8,7 +8,5 @@ public interface ViewPoint {
     ViewPoint forward();
 
     ViewPoint backward();
-
-
 }
 
